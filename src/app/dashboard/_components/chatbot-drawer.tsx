@@ -11,7 +11,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
-import { handleChat, handleChatStreaming } from '@/features/ai/chat';
+import { handleChatStreaming } from '@/features/ai/chat';
 import { cn } from '@/lib/utils';
 import { BotIcon, ChevronDownIcon, EllipsisIcon, XIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -128,21 +128,23 @@ export default function ChatbotDrawer() {
     <Drawer direction="right" modal={false}>
       <DrawerTrigger className="fixed bottom-4 right-4" asChild>
         <Button
-          className="rounded-full size-14"
+          className="rounded-full size-14 shadow-lg"
           size="icon-lg"
           variant="outline"
+          title="Buka Chatbot Finabot"
         >
-          <BotIcon className="size-6" />
+          <BotIcon className="size-6 text-primary" />
         </Button>
       </DrawerTrigger>
       <DrawerContent className="w-screen! md:w-110!">
-        <DrawerHeader className="flex flex-row justify-between">
+        <DrawerHeader className="flex flex-row justify-between items-center">
           <div>
-            <DrawerTitle className="font-bold text-primary">
-              AI Financial Advisor
+            <DrawerTitle className="font-bold text-primary flex items-center gap-2">
+              <BotIcon className="size-5" />
+              Finabot - AI Financial Advisor
             </DrawerTitle>
             <DrawerDescription>
-              Get personalized financial advice.
+              Konsultasikan perencanaan &amp; analisis keuangan Anda secara cerdas.
             </DrawerDescription>
           </div>
           <DrawerClose asChild>
@@ -172,9 +174,9 @@ export default function ChatbotDrawer() {
                     })}
                   >
                     {message.role === 'model' && (
-                      <div className="flex items-center text-xs font-semibold gap-1 text-primary">
-                        <BotIcon />
-                        AI Advisor
+                      <div className="flex items-center text-xs font-semibold gap-1 text-primary mb-1">
+                        <BotIcon className="size-3" />
+                        Finabot AI
                       </div>
                     )}
                     {message.role === 'model' ? (
@@ -184,13 +186,13 @@ export default function ChatbotDrawer() {
                             {part.thought ? (
                               <Collapsible>
                                 <CollapsibleTrigger asChild>
-                                  <Button variant="ghost">
-                                    Tampilkan alur berpikir
-                                    <ChevronDownIcon />
+                                  <Button variant="ghost" size="sm" className="text-xs">
+                                    Lihat proses penalaran
+                                    <ChevronDownIcon className="size-3 ml-1" />
                                   </Button>
                                 </CollapsibleTrigger>
                                 <CollapsibleContent>
-                                  <div className="pl-2 ml-4 border-l">
+                                  <div className="pl-3 ml-2 my-2 border-l-2 border-primary/30 text-xs text-muted-foreground">
                                     <Markdown>{part.text}</Markdown>
                                   </div>
                                 </CollapsibleContent>
@@ -214,9 +216,12 @@ export default function ChatbotDrawer() {
               )}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full">
-              <h2 className="text-3xl font-bold text-primary">Hello There</h2>
-              <h4 className="text-xl">What can I help you?</h4>
+            <div className="flex flex-col items-center justify-center h-full text-center px-4">
+              <BotIcon className="size-12 text-primary mb-3" />
+              <h2 className="text-2xl font-bold text-primary">Halo! Saya Finabot</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Ada yang bisa saya bantu seputar perencanaan, anggaran, atau transaksi keuangan Anda?
+              </p>
             </div>
           )}
         </div>

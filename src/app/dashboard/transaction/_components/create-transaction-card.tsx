@@ -30,16 +30,17 @@ import { createTransaction } from '@/features/transaction/action';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import FileDropzoneInput from '../../_components/file-dropzone-input';
-import { CATEGORIES } from '@/constants/transaction-constant';
+import { CATEGORIES, CATEGORY_LABELS } from '@/constants/transaction-constant';
+import { formatThousands, parseThousands } from '@/lib/utils';
 
 const formSchema = z.object({
-  amount: z.string().min(1, 'Amount is required'),
+  amount: z.string().min(1, 'Nominal transaksi wajib diisi'),
   type: z.enum(['income', 'expense'], {
-    error: 'Type is required',
+    error: 'Jenis transaksi wajib dipilih',
   }),
-  category: z.string().min(1, 'Category is required'),
-  date: z.string().min(1, 'Date is required'),
-  description: z.string().min(1, 'Description is required'),
+  category: z.string().min(1, 'Kategori transaksi wajib dipilih'),
+  date: z.string().min(1, 'Tanggal transaksi wajib diisi'),
+  description: z.string().min(1, 'Deskripsi transaksi wajib diisi'),
 });
 
 export default function CreateTransactionCard({
@@ -62,7 +63,7 @@ export default function CreateTransactionCard({
     mutationFn: (data: z.infer<typeof formSchema>) => {
       const formatedData = {
         ...data,
-        amount: parseFloat(data.amount),
+        amount: parseThousands(data.amount),
       };
 
       return createTransaction(formatedData);
@@ -70,11 +71,11 @@ export default function CreateTransactionCard({
     onSuccess: () => {
       form.reset();
       refetch();
-      toast.success('Transaction created successfully!');
+      toast.success('Transaksi berhasil ditambahkan!');
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : 'Failed to create transaction',
+        error instanceof Error ? error.message : 'Gagal menambahkan transaksi',
       );
     },
   });
@@ -86,8 +87,8 @@ export default function CreateTransactionCard({
   return (
     <Card className="w-full gap-2 h-fit">
       <CardHeader className="gap-0">
-        <CardTitle>Create Transaction</CardTitle>
-        <CardDescription>Add a new financial activity.</CardDescription>
+        <CardTitle>Tambah Transaksi</CardTitle>
+        <CardDescription>Catat aktivitas keuangan baru Anda.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="mb-4">
@@ -100,13 +101,17 @@ export default function CreateTransactionCard({
               name="amount"
               render={({ field, fieldState }) => (
                 <Field className="gap-1">
-                  <FieldLabel htmlFor="form-amount">Amount</FieldLabel>
+                  <FieldLabel htmlFor="form-amount">Nominal (Rp)</FieldLabel>
                   <Input
-                    {...field}
                     id="form-amount"
-                    placeholder="0,00"
+                    placeholder="Contoh: 100.000"
                     autoComplete="off"
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    value={field.value}
+                    onChange={(e) => {
+                      field.onChange(formatThousands(e.target.value));
+                    }}
                   />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
@@ -119,14 +124,16 @@ export default function CreateTransactionCard({
               name="type"
               render={({ field, fieldState }) => (
                 <Field className="gap-1">
-                  <FieldLabel htmlFor="form-type">Type</FieldLabel>
+                  <FieldLabel htmlFor="form-type">Jenis Transaksi</FieldLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger id="form-type">
-                      <SelectValue placeholder="Select type" />
+                      <SelectValue placeholder="Pilih jenis transaksi" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="income">Income</SelectItem>
-                      <SelectItem value="expense">Expense</SelectItem>
+                      <SelectItem value="income">Pemasukan (Income)</SelectItem>
+                      <SelectItem value="expense">
+                        Pengeluaran (Expense)
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   {fieldState.invalid && (
@@ -140,15 +147,15 @@ export default function CreateTransactionCard({
               name="category"
               render={({ field, fieldState }) => (
                 <Field className="gap-1">
-                  <FieldLabel htmlFor="form-category">Category</FieldLabel>
+                  <FieldLabel htmlFor="form-category">Kategori</FieldLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger id="form-category">
-                      <SelectValue placeholder="Select category" />
+                      <SelectValue placeholder="Pilih kategori" />
                     </SelectTrigger>
                     <SelectContent>
                       {CATEGORIES.map((category) => (
                         <SelectItem value={category} key={category}>
-                          {category}
+                          {CATEGORY_LABELS[category] || category}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -164,7 +171,7 @@ export default function CreateTransactionCard({
               name="date"
               render={({ field, fieldState }) => (
                 <Field className="gap-1">
-                  <FieldLabel htmlFor="form-date">Date</FieldLabel>
+                  <FieldLabel htmlFor="form-date">Tanggal</FieldLabel>
                   <DatePicker
                     id="form-date"
                     value={field.value ? new Date(field.value) : undefined}
@@ -184,12 +191,12 @@ export default function CreateTransactionCard({
               render={({ field, fieldState }) => (
                 <Field className="gap-1">
                   <FieldLabel htmlFor="form-description">
-                    Description
+                    Keterangan / Deskripsi
                   </FieldLabel>
                   <Textarea
                     {...field}
                     id="form-description"
-                    placeholder="Enter description"
+                    placeholder="Masukkan deskripsi transaksi (contoh: Belanja bulanan, Gaji)"
                     autoComplete="off"
                   />
                   {fieldState.invalid && (
@@ -199,7 +206,7 @@ export default function CreateTransactionCard({
               )}
             />
             <Button size="lg" type="submit" disabled={isPending}>
-              {isPending ? 'Creating...' : 'Create Transaction'}
+              {isPending ? 'Menyimpan...' : 'Simpan Transaksi'}
             </Button>
           </FieldGroup>
         </form>

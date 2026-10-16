@@ -178,10 +178,10 @@ function getFallbackSvgInfographic(request: string, contextData: string): string
     <circle cx="100" cy="600" r="250" fill="#10B981" opacity="0.06"/>
 
     <rect x="60" y="40" width="1080" height="90" rx="16" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="1" filter="url(#cardShadow)"/>
-    <text x="90" y="80" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#FFFFFF">Financial Insight Infographic</text>
+    <text x="90" y="80" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#FFFFFF">Infografis Wawasan Keuangan</text>
     <text x="90" y="106" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#94A3B8">${safeRequest}</text>
     <rect x="970" y="65" width="140" height="34" rx="8" fill="#10B981" opacity="0.15"/>
-    <text x="1040" y="87" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600" fill="#34D399" text-anchor="middle">Fina AI Verified</text>
+    <text x="1040" y="87" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600" fill="#34D399" text-anchor="middle">Terverifikasi AI</text>
 
     <rect x="60" y="150" width="340" height="150" rx="16" fill="rgba(16, 185, 129, 0.08)" stroke="rgba(16, 185, 129, 0.25)" stroke-width="1.5" filter="url(#cardShadow)"/>
     <text x="90" y="195" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#A7F3D0">TOTAL PEMASUKAN</text>
@@ -248,6 +248,7 @@ async function generateSvgInfographic(
           4. Key insights / financial takeaways bullets at the bottom.
         - Typography: Use clean system sans-serif fonts (font-family="system-ui, -apple-system, sans-serif").
         - Currency: Format in Indonesian Rupiah (Rp ...).
+        - Language: All titles, card labels, category names, and descriptions MUST be in Indonesian (Bahasa Indonesia).
         - Output format: STRICTLY return ONLY valid raw <svg ...>...</svg> XML markup. Do NOT wrap in markdown backticks or any other text.
       </designRequirements>
     `;

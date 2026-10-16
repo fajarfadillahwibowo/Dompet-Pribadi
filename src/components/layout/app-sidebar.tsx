@@ -16,12 +16,12 @@ import { cn } from '@/lib/utils';
 
 const sidebarItems = [
   {
-    label: 'Dashboard',
+    label: 'Dasbor',
     icon: <LayoutDashboardIcon />,
     href: '/dashboard',
   },
   {
-    label: 'Transaction',
+    label: 'Transaksi',
     icon: <BanknoteIcon />,
     href: '/dashboard/transaction',
   },

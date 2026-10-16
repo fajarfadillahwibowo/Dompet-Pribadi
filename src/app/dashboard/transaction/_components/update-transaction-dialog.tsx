@@ -24,8 +24,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { CATEGORIES } from '@/constants/transaction-constant';
+import { CATEGORIES, CATEGORY_LABELS } from '@/constants/transaction-constant';
 import { updateTransaction } from '@/features/transaction/action';
+import { formatThousands, parseThousands } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { format } from 'date-fns';
@@ -35,13 +36,13 @@ import { toast } from 'sonner';
 import z from 'zod';
 
 const formSchema = z.object({
-  amount: z.string().min(1, 'Amount is required'),
+  amount: z.string().min(1, 'Nominal transaksi wajib diisi'),
   type: z.enum(['income', 'expense'], {
-    error: 'Type is required',
+    error: 'Jenis transaksi wajib dipilih',
   }),
-  category: z.string().min(1, 'Category is required'),
-  date: z.string().min(1, 'Date is required'),
-  description: z.string().min(1, 'Description is required'),
+  category: z.string().min(1, 'Kategori transaksi wajib dipilih'),
+  date: z.string().min(1, 'Tanggal transaksi wajib diisi'),
+  description: z.string().min(1, 'Deskripsi transaksi wajib diisi'),
 });
 
 export default function UpdateTransactionDialog({
@@ -65,7 +66,7 @@ export default function UpdateTransactionDialog({
     resolver: zodResolver(formSchema),
     defaultValues: {
       amount: selectedTransaction
-        ? String(selectedTransaction.data.amount)
+        ? formatThousands(selectedTransaction.data.amount)
         : '',
       type: selectedTransaction ? selectedTransaction.data.type : 'income',
       category: selectedTransaction ? selectedTransaction.data.category : '',
@@ -86,7 +87,7 @@ export default function UpdateTransactionDialog({
     }) => {
       const formatedData = {
         ...data,
-        amount: parseFloat(data.amount),
+        amount: parseThousands(data.amount),
       };
       return updateTransaction(id, formatedData);
     },
@@ -94,11 +95,11 @@ export default function UpdateTransactionDialog({
       setSelectedTransaction(null);
       refetch();
       form.reset();
-      toast.success('Transaction updated successfully!');
+      toast.success('Transaksi berhasil diperbarui!');
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : 'Failed to update transaction',
+        error instanceof Error ? error.message : 'Gagal memperbarui transaksi',
       );
     },
   });
@@ -106,7 +107,7 @@ export default function UpdateTransactionDialog({
   useEffect(() => {
     if (selectedTransaction) {
       form.reset({
-        amount: String(selectedTransaction.data.amount),
+        amount: formatThousands(selectedTransaction.data.amount),
         type: selectedTransaction.data.type,
         category: selectedTransaction.data.category,
         date: String(selectedTransaction.data.date),
@@ -131,9 +132,9 @@ export default function UpdateTransactionDialog({
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogHeader className="gap-4">
             <div>
-              <DialogTitle>Update Transaction</DialogTitle>
+              <DialogTitle>Ubah Transaksi</DialogTitle>
               <DialogDescription>
-                Update the transaction data below.
+                Perbarui data rincian transaksi di bawah ini.
               </DialogDescription>
             </div>
             <FieldGroup className="gap-3">
@@ -142,13 +143,17 @@ export default function UpdateTransactionDialog({
                 name="amount"
                 render={({ field, fieldState }) => (
                   <Field className="gap-1">
-                    <FieldLabel htmlFor="form-amount">Amount</FieldLabel>
+                    <FieldLabel htmlFor="form-amount">Nominal (Rp)</FieldLabel>
                     <Input
-                      {...field}
                       id="form-amount"
-                      placeholder="0,00"
+                      placeholder="Contoh: 100.000"
                       autoComplete="off"
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
+                      value={field.value}
+                      onChange={(e) => {
+                        field.onChange(formatThousands(e.target.value));
+                      }}
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
@@ -161,14 +166,18 @@ export default function UpdateTransactionDialog({
                 name="type"
                 render={({ field, fieldState }) => (
                   <Field className="gap-1">
-                    <FieldLabel htmlFor="form-type">Type</FieldLabel>
+                    <FieldLabel htmlFor="form-type">Jenis Transaksi</FieldLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger id="form-type">
-                        <SelectValue placeholder="Select type" />
+                        <SelectValue placeholder="Pilih jenis transaksi" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="income">Income</SelectItem>
-                        <SelectItem value="expense">Expense</SelectItem>
+                        <SelectItem value="income">
+                          Pemasukan (Income)
+                        </SelectItem>
+                        <SelectItem value="expense">
+                          Pengeluaran (Expense)
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     {fieldState.invalid && (
@@ -182,15 +191,15 @@ export default function UpdateTransactionDialog({
                 name="category"
                 render={({ field, fieldState }) => (
                   <Field className="gap-1">
-                    <FieldLabel htmlFor="form-category">Category</FieldLabel>
+                    <FieldLabel htmlFor="form-category">Kategori</FieldLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger id="form-category">
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Pilih kategori" />
                       </SelectTrigger>
                       <SelectContent>
                         {CATEGORIES.map((category) => (
                           <SelectItem value={category} key={category}>
-                            {category}
+                            {CATEGORY_LABELS[category] || category}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -206,7 +215,7 @@ export default function UpdateTransactionDialog({
                 name="date"
                 render={({ field, fieldState }) => (
                   <Field className="gap-1">
-                    <FieldLabel htmlFor="form-date">Date</FieldLabel>
+                    <FieldLabel htmlFor="form-date">Tanggal</FieldLabel>
                     <DatePicker
                       id="form-date"
                       value={field.value ? new Date(field.value) : undefined}
@@ -226,12 +235,12 @@ export default function UpdateTransactionDialog({
                 render={({ field, fieldState }) => (
                   <Field className="gap-1">
                     <FieldLabel htmlFor="form-description">
-                      Description
+                      Keterangan / Deskripsi
                     </FieldLabel>
                     <Textarea
                       {...field}
                       id="form-description"
-                      placeholder="Enter description"
+                      placeholder="Masukkan deskripsi transaksi"
                       autoComplete="off"
                     />
                     {fieldState.invalid && (
@@ -248,14 +257,14 @@ export default function UpdateTransactionDialog({
               onClick={() => setSelectedTransaction(null)}
               disabled={isPending}
             >
-              Cancel
+              Batal
             </Button>
             <Button
               size="lg"
               type="submit"
               disabled={!form.formState.isValid || isPending}
             >
-              {isPending ? 'Updating...' : 'Update Transaction'}
+              {isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
             </Button>
           </DialogFooter>
         </form>

@@ -10,6 +10,16 @@ export const CATEGORIES = [
   'Others',
 ];
 
+export const CATEGORY_LABELS: Record<string, string> = {
+  'Food & Drink': 'Makanan & Minuman',
+  'Shopping': 'Belanja',
+  'Housing': 'Tempat Tinggal / Rumah',
+  'Transportation': 'Transportasi',
+  'Entertainment': 'Hiburan & Rekreasi',
+  'Salary': 'Gaji / Penghasilan',
+  'Others': 'Lainnya',
+};
+
 export const transactionSchema = z.object({
   amount: z.number().default(0).describe('Transaction nominal'),
   type: z.enum(['income', 'expense']).describe('Type of transaction'),

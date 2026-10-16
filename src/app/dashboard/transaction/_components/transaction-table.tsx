@@ -34,18 +34,18 @@ import {
 import { getTransactions } from '@/features/transaction/action';
 import { cn, convertToIDR } from '@/lib/utils';
 import { PencilIcon, Trash2Icon } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { Fragment } from 'react/jsx-runtime';
+import { Fragment, useEffect, useState } from 'react';
+import { CATEGORY_LABELS } from '@/constants/transaction-constant';
 import DeleteTransactionDialog from './delete-transaction-dialog';
 import UpdateTransactionDialog from './update-transaction-dialog';
 
 const TABLE_HEADER = [
   '#',
-  'Date',
-  'Description',
-  'Category',
-  'Amount',
-  'Action',
+  'Tanggal',
+  'Keterangan',
+  'Kategori',
+  'Nominal',
+  'Aksi',
 ];
 
 export default function TransactionTable({
@@ -91,12 +91,14 @@ export default function TransactionTable({
       <Card className="w-full gap-2">
         <CardHeader className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
           <div>
-            <CardTitle>Recent Transaction</CardTitle>
-            <CardDescription>Your latest financial activities.</CardDescription>
+            <CardTitle>Riwayat Transaksi</CardTitle>
+            <CardDescription>
+              Daftar aktivitas keuangan dan mutasi Anda.
+            </CardDescription>
           </div>
           <div>
             <Input
-              placeholder="Search..."
+              placeholder="Cari transaksi..."
               value={localSearch}
               onChange={(e) => setLocalSearch(e.target.value)}
               className="w-full"
@@ -118,10 +120,17 @@ export default function TransactionTable({
                   <TableRow key={`tr-${transaction.id}`}>
                     <TableCell>{(page - 1) * limit + index + 1}</TableCell>
                     <TableCell className="font-medium">
-                      {new Date(transaction.date).toLocaleDateString()}
+                      {new Date(transaction.date).toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
                     </TableCell>
                     <TableCell>{transaction.description}</TableCell>
-                    <TableCell>{transaction.category}</TableCell>
+                    <TableCell>
+                      {CATEGORY_LABELS[transaction.category] ||
+                        transaction.category}
+                    </TableCell>
                     <TableCell
                       className={cn(
                         'font-semibold',
@@ -165,17 +174,21 @@ export default function TransactionTable({
                 ))}
             </TableBody>
             {isLoading && (
-              <TableCaption className="mb-4">Loading...</TableCaption>
+              <TableCaption className="mb-4">
+                Memuat data transaksi...
+              </TableCaption>
             )}
             {!isLoading && transactions?.data?.length === 0 && (
               <TableCaption className="mb-4">
-                No transactions found
+                Tidak ada transaksi yang ditemukan
               </TableCaption>
             )}
           </Table>
           <div className="flex items-center justify-between mt-4">
             <div className="flex items-center gap-2">
-              <div className="text-sm text-muted-foreground">Rows per page</div>
+              <div className="text-sm text-muted-foreground">
+                Baris per halaman
+              </div>
               <Select
                 value={limit.toString()}
                 onValueChange={(value) => {

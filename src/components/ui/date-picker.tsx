@@ -1,6 +1,7 @@
 'use client';
 
 import { format } from 'date-fns';
+import { id as idLocale } from 'date-fns/locale';
 import { Calendar as CalendarIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -27,10 +28,14 @@ export function DatePicker({
           variant="secondary"
           id={id}
           data-empty={!value}
-          className="w-70 justify-start bg-input/50 text-left font-normal data-[empty=true]:text-muted-foreground"
+          className="w-full justify-start bg-input/50 text-left font-normal data-[empty=true]:text-muted-foreground"
         >
-          <CalendarIcon />
-          {value ? format(value, 'PPP') : <span>Pick a date</span>}
+          <CalendarIcon className="mr-2 size-4" />
+          {value ? (
+            format(value, 'dd MMMM yyyy', { locale: idLocale })
+          ) : (
+            <span>Pilih tanggal</span>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">

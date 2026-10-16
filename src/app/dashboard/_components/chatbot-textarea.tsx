@@ -16,7 +16,7 @@ import { Controller, useForm } from 'react-hook-form';
 import z from 'zod';
 
 const formSchema = z.object({
-  message: z.string().min(1, 'Message is required'),
+  message: z.string().min(1, 'Pesan tidak boleh kosong'),
 });
 
 export default function ChatbotTextarea({
@@ -50,6 +50,7 @@ export default function ChatbotTextarea({
       onSubmit(form.getValues());
     }
   }
+
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}
@@ -63,23 +64,24 @@ export default function ChatbotTextarea({
             <textarea
               {...field}
               id="form-message"
-              placeholder="Ask AI Advisor here"
+              placeholder="Tanyakan hal seputar keuangan atau analisis transaksi Anda di sini..."
               autoComplete="off"
-              className="h-16 px-3 py-2 resize-none rounded-md focus:outline-none"
+              className="h-16 px-3 py-2 resize-none rounded-md focus:outline-none text-sm"
               onKeyDown={handleKeyDown}
             />
           </Field>
         )}
       />
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mt-1">
         <div className="flex items-center gap-2">
           <Toggle
             size="sm"
             variant="outline"
             pressed={isThinking}
             onPressedChange={setIsThinking}
+            title={isThinking ? 'Mode Penalaran AI Aktif' : 'Aktifkan Mode Penalaran AI (Thinking)'}
             className={cn('text-xs px-0 py-0 h-8 w-8', {
-              'bg-primary/10!': isThinking,
+              'bg-primary/20! text-primary': isThinking,
             })}
           >
             <BrainIcon className="size-4" />
@@ -88,12 +90,14 @@ export default function ChatbotTextarea({
             value={mode}
             onValueChange={(value: 'general' | 'personal') => setMode(value)}
           >
-            <SelectTrigger size="sm" className="capitalize!">
-              <SelectValue>{mode}</SelectValue>
+            <SelectTrigger size="sm" className="h-8 text-xs">
+              <SelectValue>
+                {mode === 'general' ? 'Konsultasi Umum' : 'Analisis Pribadi'}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="general">General</SelectItem>
-              <SelectItem value="personal">Personal</SelectItem>
+              <SelectItem value="general">Konsultasi Umum</SelectItem>
+              <SelectItem value="personal">Analisis Keuangan Pribadi</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -102,6 +106,7 @@ export default function ChatbotTextarea({
             type="submit"
             size="icon"
             variant="ghost"
+            title="Kirim pesan"
             className="cursor-pointer text-primary hover:bg-primary/10 hover:text-primary disabled:bg-transparent"
           >
             <SendIcon className="size-5" />

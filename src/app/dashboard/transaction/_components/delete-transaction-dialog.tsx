@@ -37,11 +37,11 @@ export default function DeleteTransactionDialog({
     onSuccess: () => {
       setSelectedTransaction(null);
       refetch();
-      toast.success('Transaction deleted successfully!');
+      toast.success('Transaksi berhasil dihapus!');
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : 'Failed to delete transaction',
+        error instanceof Error ? error.message : 'Gagal menghapus transaksi',
       );
     },
   });
@@ -52,10 +52,10 @@ export default function DeleteTransactionDialog({
     >
       <DialogContent className="gap-4">
         <DialogHeader className="gap-4">
-          <DialogTitle>Are you sure?</DialogTitle>
+          <DialogTitle>Konfirmasi Hapus Transaksi</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            transactions data from the database.
+            Apakah Anda yakin ingin menghapus transaksi ini? Tindakan ini tidak
+            dapat dibatalkan dan data akan dihapus secara permanen dari database.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -64,7 +64,7 @@ export default function DeleteTransactionDialog({
             onClick={() => setSelectedTransaction(null)}
             disabled={isPending}
           >
-            Cancel
+            Batal
           </Button>
           <Button
             variant="destructive"
@@ -73,7 +73,7 @@ export default function DeleteTransactionDialog({
               if (selectedTransaction) mutate(selectedTransaction.data.id);
             }}
           >
-            {isPending ? 'Deleting...' : 'Delete'}
+            {isPending ? 'Menghapus...' : 'Hapus Transaksi'}
           </Button>
         </DialogFooter>
       </DialogContent>

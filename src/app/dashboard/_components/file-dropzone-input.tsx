@@ -1,5 +1,5 @@
 import { extractReceiptData } from '@/features/ai/multimodal';
-import { cn } from '@/lib/utils';
+import { cn, formatThousands } from '@/lib/utils';
 import { useMutation } from '@tanstack/react-query';
 import { Loader2Icon, UploadCloudIcon } from 'lucide-react';
 import { DragEvent, useRef, useState } from 'react';
@@ -7,7 +7,6 @@ import { UseFormSetValues } from 'react-hook-form';
 import { toast } from 'sonner';
 
 export default function FileDropzoneInput({
-  refetch,
   setValues,
 }: {
   refetch: () => void;
@@ -27,19 +26,18 @@ export default function FileDropzoneInput({
     onSuccess: (response) => {
       setValues({
         ...response,
-        amount: `${response.amount}`,
+        amount: formatThousands(response.amount),
       });
-      toast.success('Scan receipt successfully!');
+      toast.success('Struk transaksi berhasil dipindai!');
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-      //   refetch();
     },
     onError: (error) => {
       toast.error(
         error instanceof Error
           ? error.message
-          : 'Failed to process your request',
+          : 'Gagal memproses struk transaksi',
       );
     },
   });
@@ -51,7 +49,7 @@ export default function FileDropzoneInput({
       !file.type.startsWith('video') &&
       !file.type.startsWith('audio')
     ) {
-      toast.error('File type not supported');
+      toast.error('Format file tidak didukung');
       return;
     }
 
@@ -97,7 +95,7 @@ export default function FileDropzoneInput({
       {isPending ? (
         <div className="flex flex-col items-center gap-2">
           <Loader2Icon className="size-8 text-primary animate-spin" />
-          <p className="text-xs font-medium">AI is processing receipt</p>
+          <p className="text-xs font-medium">AI sedang memindai struk...</p>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-2">
@@ -108,8 +106,10 @@ export default function FileDropzoneInput({
             )}
           />
           <div className="space-y-1 text-center">
-            <p className="text-sm font-medium">Drag & Drop Receipt Here</p>
-            <p className="text-xs text-muted-foreground">or click to browse</p>
+            <p className="text-sm font-medium">Tarik & Lepas Struk / Nota di Sini</p>
+            <p className="text-xs text-muted-foreground">
+              atau klik untuk memilih file foto/PDF struk belanja
+            </p>
           </div>
         </div>
       )}

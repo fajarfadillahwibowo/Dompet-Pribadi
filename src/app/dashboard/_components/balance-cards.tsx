@@ -20,7 +20,7 @@ export function BalanceCards({
   if (error) {
     return (
       <div className="w-full p-4 text-sm border rounded-lg border-destructive/50 text-destructive bg-destructive/10">
-        Failed to get balance
+        Gagal memuat data ringkasan saldo
       </div>
     );
   }
@@ -31,37 +31,43 @@ export function BalanceCards({
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-primary">
             <WalletIcon className="size-4" />
-            Savings
+            Tabungan / Sisa Saldo
           </CardTitle>
           <CardDescription className="text-lg font-semibold lg:text-2xl text-secondary-foreground">
             {convertToIDR(Number(data?.savings || 0))}
           </CardDescription>
         </CardHeader>
-        <CardFooter className="text-sm">Savings for all time</CardFooter>
+        <CardFooter className="text-sm text-muted-foreground">
+          Total sisa saldo sepanjang waktu
+        </CardFooter>
       </Card>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-primary">
             <TrendingUpIcon className="size-4" />
-            Incomes
+            Total Pemasukan
           </CardTitle>
           <CardDescription className="text-lg font-semibold lg:text-2xl text-secondary-foreground">
             {convertToIDR(Number(data?.totalIncome || 0))}
           </CardDescription>
         </CardHeader>
-        <CardFooter className="text-sm">Total Incomes for all time</CardFooter>
+        <CardFooter className="text-sm text-muted-foreground">
+          Akumulasi seluruh pemasukan
+        </CardFooter>
       </Card>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-primary">
             <TrendingDownIcon className="size-4" />
-            Expenses
+            Total Pengeluaran
           </CardTitle>
           <CardDescription className="text-lg font-semibold lg:text-2xl text-secondary-foreground">
             {convertToIDR(Number(data?.totalExpense || 0))}
           </CardDescription>
         </CardHeader>
-        <CardFooter className="text-sm">Total expenses for all time</CardFooter>
+        <CardFooter className="text-sm text-muted-foreground">
+          Akumulasi seluruh pengeluaran
+        </CardFooter>
       </Card>
     </div>
   );

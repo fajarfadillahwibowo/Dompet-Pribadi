@@ -56,7 +56,7 @@ function formatErrorMessage(error: unknown): string {
 }
 
 const formSchema = z.object({
-  request: z.string().min(1, 'Request is required'),
+  request: z.string().min(1, 'Permintaan analisis wajib diisi'),
 });
 
 const COLORS = [
@@ -98,7 +98,7 @@ export default function GenerativeContent() {
     },
   });
 
-  const { mutate, isPending, error } = useMutation({
+  const { mutate, isPending, error, reset } = useMutation({
     mutationFn: async (request: string) => {
       switch (insightType) {
         case 'chart':
@@ -122,7 +122,15 @@ export default function GenerativeContent() {
     },
     onSuccess: (response) => {
       setResult(response);
-      toast.success(`Success generate ${insightType}`);
+      toast.success(
+        `Berhasil membuat visualisasi ${
+          insightType === 'chart'
+            ? 'diagram'
+            : insightType === 'image'
+              ? 'infografis'
+              : 'video'
+        }!`,
+      );
     },
     onError: (error) => {
       toast.error(formatErrorMessage(error));
@@ -146,7 +154,7 @@ export default function GenerativeContent() {
         <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
           <CardTitle className="flex items-center gap-2 text-xl">
             <SparklesIcon className="size-5 text-primary" />
-            Generative AI Insight
+            Wawasan Visual AI (Generative Insight)
           </CardTitle>
           <form
             className="flex flex-col gap-2 lg:flex-row lg:items-center"
@@ -157,6 +165,7 @@ export default function GenerativeContent() {
                 variant={insightType === 'chart' ? 'default' : 'secondary'}
                 type="button"
                 size="icon"
+                title="Mode Diagram"
                 onClick={() => {
                   setInsightType('chart');
                   reset();
@@ -168,6 +177,7 @@ export default function GenerativeContent() {
                 variant={insightType === 'image' ? 'default' : 'secondary'}
                 type="button"
                 size="icon"
+                title="Mode Infografis Gambar"
                 onClick={() => {
                   setInsightType('image');
                   reset();
@@ -179,6 +189,7 @@ export default function GenerativeContent() {
                 variant={insightType === 'video' ? 'default' : 'secondary'}
                 type="button"
                 size="icon"
+                title="Mode Video"
                 onClick={() => {
                   setInsightType('video');
                   reset();
@@ -196,8 +207,8 @@ export default function GenerativeContent() {
                     <Input
                       {...field}
                       id="form-request"
-                      placeholder="Insert your request..."
-                      className="w-50 lg:w-70"
+                      placeholder="Tulis permintaan analisis (misal: ringkasan arus kas)..."
+                      className="w-60 lg:w-80"
                       onKeyDown={handleKeyDown}
                       disabled={isPending}
                     />
@@ -211,7 +222,7 @@ export default function GenerativeContent() {
                   <Sparkles className="size-4" />
                 )}
                 <span className="hidden lg:inline">
-                  {result ? 'Update' : 'Generate'}
+                  {result ? 'Perbarui' : 'Buat Visual'}
                 </span>
               </Button>
             </div>
@@ -229,12 +240,15 @@ export default function GenerativeContent() {
           <div className="flex items-center justify-center border-2 border-dashed rounded-lg h-70">
             {isPending ? (
               <div className="flex flex-col items-center">
-                <Loader2Icon className="size-8 animate-spin" />
-                <span>AI is generating insight</span>
+                <Loader2Icon className="size-8 animate-spin text-primary" />
+                <span className="mt-2 text-sm text-muted-foreground">
+                  AI sedang menganalisis data & membuat visualisasi...
+                </span>
               </div>
             ) : (
-              <span className="text-lg text-muted-foreground/50">
-                Generate insight content with AI
+              <span className="text-sm text-center px-4 text-muted-foreground/60">
+                Pilih jenis visual (Diagram / Gambar / Video) dan masukkan
+                permintaan analisis Anda di atas
               </span>
             )}
           </div>

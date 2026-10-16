@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Field } from '@/components/ui/field';
-import { handleWizardInput, handleWizardTools } from '@/features/ai/wizard';
+import { handleWizardTools } from '@/features/ai/wizard';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import {
@@ -20,7 +20,7 @@ import { toast } from 'sonner';
 import z from 'zod';
 
 const formSchema = z.object({
-  message: z.string().min(1, 'Message is required'),
+  message: z.string().min(1, 'Pesan wajib diisi'),
 });
 
 export default function WizardInput({ refetch }: { refetch: () => void }) {
@@ -49,7 +49,7 @@ export default function WizardInput({ refetch }: { refetch: () => void }) {
       toast.error(
         error instanceof Error
           ? error.message
-          : 'Failed to process your request',
+          : 'Gagal memproses permintaan Anda',
       );
     },
   });
@@ -93,8 +93,8 @@ export default function WizardInput({ refetch }: { refetch: () => void }) {
 
       mediaRecorder.start();
       setIsRecording(true);
-    } catch (error) {
-      toast.error('Failed to access media recorder');
+    } catch {
+      toast.error('Gagal mengakses mikrofon');
     }
   }
 
@@ -127,10 +127,10 @@ export default function WizardInput({ refetch }: { refetch: () => void }) {
                   id="form-message"
                   placeholder={
                     isRecording
-                      ? 'Listening...'
+                      ? 'Sedang mendengarkan suara Anda...'
                       : isPending && !field.value
-                        ? 'Processing your request...'
-                        : 'Manage your transaction here'
+                        ? 'Sedang memproses permintaan Anda...'
+                        : 'Kelola transaksi Anda di sini lewat teks atau suara AI...'
                   }
                   autoComplete="off"
                   className="h-14 focus:outline-none"
